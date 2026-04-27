@@ -1,76 +1,102 @@
-// rafc
-import axios from 'axios'
-import React, { useState } from 'react'
+import { useState } from "react";
 
-const AxiosPost = () => {
-    const data ={
-        fname:"",
-        lname:""
-    }
-    const[inputData, setInputData] = useState(data)
+export default function AxiosPost() {
+  const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState([]);
 
+  // add task
+  const handleAdd = () => {
+    if (task.trim() === "") return;
 
+    setTasks([...tasks, task]);
+    setTask("");
+  };
 
+  // delete task
+  const handleDelete = (index) => {
+    const updated = tasks.filter((_, i) => i !== index);
+    setTasks(updated);
+  };
 
-    const handleInput=(event)=>{
-        
-        console.log(event.target.value);
-        setInputData({...inputData, [event.target.name]:event.target.value})
+  // update task
+  const handleUpdate = (index) => {
+    const newTask = prompt("Enter updated task:");
+    if (!newTask) return;
 
-    }
-    const handleSubmit=(evnt)=>{
-        evnt.preventDefault()
-        axios.post("https://jsonplaceholder.typicode.com/todos",inputData)
-        .then((res)=>{
-            console.log(res)
-        }).catch((err)=>{
-            console.log(err)
-        })
-
-    }
-    console.log(inputData)
-    const handleForm =(evnt)=>{
-        evnt.preventDefault()
-
-        axios.post("https://jsonplaceholder.typicode.com/todos",inputData)
-        .then((res)=>{
-            console.log(res);
-        }).catch((err)=>{
-            console.log(err);
-        })
-    }
-    const handleUpdate=(e)=>{
-        e.preventDefault()
-        axios.put("https://jsonplaceholder.typicode.com/todos/1",inputData)
-        .then((res)=>{
-            console.log(res);
-        }).catch((err)=>{
-            console.log(err)
-        })
-    }
-    const handleDelete=(ev)=>{
-        ev.preventDefault()
-         axios.put("https://jsonplaceholder.typicode.com/todos/1",inputData)
-        .then((res)=>{
-            console.log(res);
-        }).catch((err)=>{
-            console.log(err)
-        })
-    }
+    const updated = [...tasks];
+    updated[index] = newTask;
+    setTasks(updated);
+  };
 
   return (
     <div>
-        <form onSubmit={handleForm}>
-            <input type='text' placeholder='enter name' name='fname' onChange={handleInput}/>
-            <input type='text' placeholder='enter last name' name='lname'  onChange={handleInput}/>
-            <button onClick={handleSubmit}>submit</button><br></br>
-            <button onClick={handleUpdate}>update</button> <br />
-            <button onClick={handleDelete}>delete </button>
+      <h2>TODO App</h2>
 
-        </form>
-      
+      {/* Input + Submit */}
+      <div style={{ marginBottom: "15px" }}>
+        <input
+          type="text"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="Enter your task"
+          style={{ padding: "5px", width: "200px" }}
+        />
+
+        <button
+          onClick={handleAdd}
+          style={{
+            marginLeft: "10px",
+            padding: "6px 12px",
+            cursor: "pointer",
+          }}
+        >
+          Submit
+        </button>
+      </div>
+
+      {/* Task List */}
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {tasks.map((t, i) => (
+          <li
+            key={i}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginBottom: "8px",
+              borderRadius: "5px",
+              width: "300px",
+            }}
+          >
+            <span>{t}</span>
+
+            <div>
+              <button
+                onClick={() => handleUpdate(i)}
+                style={{
+                  marginRight: "5px",
+                  padding: "4px 8px",
+                  cursor: "pointer",
+                }}
+              >
+                Update
+              </button>
+
+              <button
+                onClick={() => handleDelete(i)}
+                style={{
+                  padding: "4px 8px",
+                  cursor: "pointer",
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
-  )
+  );
 }
-
-export default AxiosPost
