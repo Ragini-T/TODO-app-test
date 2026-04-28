@@ -1,11 +1,20 @@
-import AxiosPost from "./components/AxiosPost";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import Edit from "./components/Edit";
+import { useState } from "react";
 
-function App() {
+export default function App() {
+  const [tasks, setTasks] = useState([]);
+
   return (
-    <div style={{ padding: "40px", fontFamily: "Arial" }}>
-      <AxiosPost />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home tasks={tasks} setTasks={setTasks} />} />
+        <Route
+          path="/edit/:index"
+          element={<Edit tasks={tasks} setTasks={setTasks} />}
+        />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
